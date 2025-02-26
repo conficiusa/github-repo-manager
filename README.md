@@ -11,34 +11,79 @@ A command-line tool to interactively select and delete multiple GitHub repositor
 - Confirmation step to prevent accidental deletions
 - Color-coded selection interface for easy navigation
 
-## Requirements
-
-- Python 3.6+
-- Required Python packages:
-  - requests
-  - blessed
-
 ## Installation
 
-1. Clone this repository or download the script:
+### Via pip (recommended)
 
 ```bash
-git clone https://github.com/yourusername/github-repo-bulk-delete.git
+pip install github-repo-bulk-delete
+```
+
+### Install from source
+
+1. Clone this repository:
+
+```bash
+git clone https://github.com/conficiusa/github-repo-bulk-delete.git
 cd github-repo-bulk-delete
 ```
 
-2. Install required dependencies:
+2. Install the package:
 
 ```bash
-pip install requests blessed
+pip install -e .
 ```
 
 ## Usage
 
-Run the script with Python:
+### Command Line Interface
+
+After installation, you can run the tool directly using:
 
 ```bash
-python github-repo-bulk-delete.py
+github-repo-delete
+```
+
+Or with command line arguments:
+
+```bash
+github-repo-delete --pattern "test-" --dry-run
+```
+
+### Python Library
+
+You can also use the package as a Python library in your code:
+
+```python
+# Using the convenience function
+from github_repo_bulk_deleter import delete_repositories
+
+# Delete repositories interactively
+delete_repositories(
+    token="your-github-token",  # Optional: will prompt if not provided
+    username="your-username",   # Optional: will prompt if not provided
+    pattern="test-",           # Optional: filter repos by name
+    visibility="private",      # Optional: 'public' or 'private'
+    dry_run=True,             # Optional: preview without deleting
+    no_confirm=False,         # Optional: skip confirmation
+    delay=1.0                 # Optional: delay between deletions
+)
+
+# Using the class directly for more control
+from github_repo_bulk_deleter import GitHubRepoBulkDeleter
+
+# Initialize the deleter
+deleter = GitHubRepoBulkDeleter(token="your-github-token", username="your-username")
+
+# Get repositories (optionally filtered)
+repos = deleter.get_repositories(filter_pattern="test-", visibility="private")
+
+# Delete repositories with interactive selection
+deleter.bulk_delete(repos, dry_run=True, confirm=True, delay=1.0)
+
+# Or delete specific repositories directly
+for repo in repos:
+    deleter.delete_repository(repo['name'])
 ```
 
 ### Authentication
@@ -54,10 +99,10 @@ You can also provide these through:
 ### Command Line Arguments
 
 ```
-usage: github-repo-bulk-delete.py [-h] [--token TOKEN] [--username USERNAME]
-                                  [--pattern PATTERN]
-                                  [--visibility {public,private}] [--no-confirm]
-                                  [--dry-run] [--delay DELAY]
+usage: github-repo-delete [-h] [--token TOKEN] [--username USERNAME]
+                           [--pattern PATTERN]
+                           [--visibility {public,private}] [--no-confirm]
+                           [--dry-run] [--delay DELAY]
 
 Bulk delete GitHub repositories
 
@@ -90,27 +135,27 @@ The script provides an interactive terminal UI for selecting repositories:
 
 1. Basic usage:
 ```bash
-python github-repo-bulk-delete.py
+github-repo-delete
 ```
 
 2. Delete only repositories matching a pattern:
 ```bash
-python github-repo-bulk-delete.py --pattern "test-"
+github-repo-delete --pattern "test-"
 ```
 
 3. Delete only private repositories:
 ```bash
-python github-repo-bulk-delete.py --visibility private
+github-repo-delete --visibility private
 ```
 
 4. Dry run (no actual deletion):
 ```bash
-python github-repo-bulk-delete.py --dry-run
+github-repo-delete --dry-run
 ```
 
 5. Skip interactive selection:
 ```bash
-python github-repo-bulk-delete.py --no-confirm
+github-repo-delete --no-confirm
 ```
 
 ## Creating a GitHub Personal Access Token
@@ -121,6 +166,33 @@ To use this script, you need a GitHub personal access token with the `delete_rep
 2. Click "Generate new token" → "Generate new token (classic)"
 3. Give your token a name and select the `delete_repo` scope
 4. Click "Generate token" and copy the token for use with this script
+
+## Development
+
+To contribute to the development of this tool:
+
+1. Clone the repository
+2. Install in development mode:
+```bash
+pip install -e .
+```
+3. Make your changes
+4. Submit a pull request
+
+## Publishing to PyPI
+
+To publish this package to PyPI (for the maintainer):
+
+```bash
+# Install build tools
+pip install build twine
+
+# Build the package
+python -m build
+
+# Upload to PyPI (you'll need PyPI credentials)
+twine upload dist/*
+```
 
 ## Security Note
 
