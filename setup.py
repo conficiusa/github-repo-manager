@@ -7,7 +7,7 @@ setup(
     name="github-repo-manager",
     version="0.1.2",
     author="conficiusa",
-    author_email="your.email@example.com",
+    author_email="addawebadua@example.com",
     description="A CLI tool to manage GitHub repositories with interactive features",
     long_description=long_description,
     long_description_content_type="text/markdown",
