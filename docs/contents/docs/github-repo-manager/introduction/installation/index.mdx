@@ -1,0 +1,114 @@
+---
+title: Installation
+description: This guide will walk you through installing and setting up the GitHub Repository Manager on your system.
+keywords: ["installation", "github", "repository", "manager", "cli", "python", "pip"]
+---
+## Prerequisites
+
+Before installing GitHub Repository Manager, ensure you have:
+
+- Python 3.6 or higher installed
+- pip (Python package installer)
+- A GitHub account
+- A GitHub personal access token with the `repo` scope (we'll cover how to create this in the [setup guide](../setup))
+
+## Installation Methods
+
+### Via pip (Recommended)
+
+The simplest way to install GitHub Repository Manager is through pip:
+
+```bash
+pip install github-repo-manager
+```
+
+This will download and install the package and its dependencies from PyPI (Python Package Index).
+
+### Install from Source
+
+For development purposes or to get the latest unreleased features, you can install directly from the source code:
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/conficiusa/github-repo-manager.git
+cd github-repo-manager
+```
+
+2. Install the package in development mode:
+
+```bash
+pip install -e .
+```
+
+This creates a link to the source directory, allowing you to modify the code and see changes without reinstalling.
+
+## System-specific Notes
+
+### Windows
+
+On Windows, ensure Python is added to your PATH environment variable. You may need to use:
+
+```bash
+py -m pip install github-repo-manager
+```
+
+### Linux/macOS
+
+You might need to use `pip3` explicitly or install with user permissions:
+
+```bash
+pip3 install --user github-repo-manager
+```
+
+## Dependencies
+
+GitHub Repository Manager automatically installs these dependencies:
+- `requests`: For GitHub API communication
+- `blessed`: For the interactive terminal UI
+
+## Verification
+
+To verify your installation:
+
+```bash
+github-repo-manager --help
+```
+
+This should display the help message with all available commands and options.
+
+If you installed with `--user` on Linux/macOS and the command isn't found, ensure your local bin directory is in your PATH.
+
+## Upgrading
+
+To upgrade to the latest version:
+
+```bash
+pip install --upgrade github-repo-manager
+```
+
+## Troubleshooting
+
+If you encounter installation issues:
+
+1. Ensure you have the latest version of pip:
+   ```bash
+   pip install --upgrade pip
+   ```
+
+2. Check your Python version:
+   ```bash
+   python --version
+   ```
+
+3. If you get permission errors, try:
+   ```bash
+   pip install --user github-repo-manager
+   ```
+
+## Next Steps
+
+Once successfully installed:
+1. [Configure your GitHub token](../setup)
+2. Try the [getting started guide](../../usage/getting-started)
+3. Learn how to [customize operations](../../usage/customization)

@@ -1,0 +1,58 @@
+---
+title: Usage
+description: This section covers how to use GitHub Repository Manager effectively for various repository management tasks. We'll explore the different ways to interact with the tool and provide practical examples.
+keywords: ["usage", "guide", "github", "repository", "manager", "operations"]
+---
+
+## Overview
+
+GitHub Repository Manager can be used in two main ways:
+
+1. **Command Line Interface**: Run commands directly from your terminal
+2. **Python Library**: Import and use the functionality in your Python scripts
+
+## Basic Usage Flow
+
+Regardless of how you use the tool, the general workflow is:
+
+1. **Authentication**: Provide GitHub credentials (token and username)
+2. **Repository Selection**: Get a list of repositories, optionally filtered
+3. **Interactive Selection**: Choose which repositories to manage
+4. **Confirmation**: Confirm the operations to be performed
+5. **Execution**: Perform the selected operations with optional safety measures
+
+## Command-line Usage
+
+The basic command is:
+
+```bash
+github-repo-manager [OPTIONS]
+```
+
+Where `[OPTIONS]` can include various filters and settings.
+
+## Python Library Usage
+
+For programmatic usage:
+
+```python
+from github_repo_manager import GitHubRepoManager
+
+manager = GitHubRepoManager()
+repos = manager.get_repositories()
+manager.bulk_delete(repos)
+```
+
+## Common Tasks
+
+Here are some common tasks you can perform with GitHub Repository Manager:
+
+- [Getting started with basic operations](./getting-started)
+- [Configuring the tool for your needs](./configuration)
+- [Customizing operations with advanced options](./customization)
+
+## Next Steps
+
+- Check the [Getting Started](./getting-started) guide for basic usage examples
+- Learn about [Configuration Options](./configuration) for customizing behavior
+- Explore [Advanced Customization](./customization) techniques for specific needs

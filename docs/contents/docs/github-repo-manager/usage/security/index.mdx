@@ -1,0 +1,178 @@
+---
+title: Security Best Practices
+description: This guide provides important security recommendations for using GitHub Repository Manager safely, particularly when working with GitHub personal access tokens and repository management.
+keywords: ["security", "token", "safety", "best practices", "guidelines"]
+---
+## GitHub Token Security
+
+### Protecting Your Personal Access Token
+
+Personal access tokens (PATs) provide access to your GitHub account and repositories. Treat them with the same care as passwords:
+
+1. **Never share your token** in emails, chat, or any public forum
+2. **Don't commit tokens to repositories**, even private ones
+3. **Set appropriate scopes** - only grant the permissions that are actually needed
+4. **Set expiration dates** - use short-lived tokens when possible
+5. **Revoke tokens** when they're no longer needed
+
+### Token Storage Best Practices
+
+```bash
+# ❌ AVOID: Hardcoding tokens in scripts
+token = "ghp_1234567890abcdefghijklmnopqrstuvwxyz"
+
+# ✅ BETTER: Use environment variables
+token = os.environ.get("GITHUB_TOKEN")
+
+# ✅ BEST: Use a secure credential manager
+from keyring import get_password
+token = get_password("github", "username")
+```
+
+### Environment Variable Safety
+
+When using environment variables:
+
+```bash
+# ❌ AVOID: Setting variables in command history
+export GITHUB_TOKEN=ghp_1234567890abcdefghijklmnopqrstuvwxyz
+
+# ✅ BETTER: Use a .env file (not committed to version control)
+# Contents of .env file:
+# GITHUB_TOKEN=ghp_1234567890abcdefghijklmnopqrstuvwxyz
+
+# Load from .env file
+from dotenv import load_dotenv
+load_dotenv()
+```
+
+## Safe Repository Operations
+
+### Safeguarding Against Accidental Deletions
+
+1. **Always use `--dry-run` first** before performing any operations
+2. **Verify repository counts** match your expectations
+3. **Double-check selection patterns** when filtering repositories
+4. **Use specific patterns** rather than broad ones
+5. **Keep regular backups** of important repository data
+
+### Example: Safe Workflow
+
+```bash
+# Step 1: Preview with dry run
+github-repo-manager --pattern "test-" --dry-run
+
+# Step 2: Review the list carefully
+# Step 3: Proceed only when confident
+github-repo-manager --pattern "test-"
+```
+
+## Automation Security
+
+When automating with GitHub Repository Manager:
+
+1. **Use dedicated tokens** for automated scripts with minimal scopes
+2. **Implement proper error handling** and logging
+3. **Add safeguards** to detect unexpected conditions
+4. **Consider using GitHub Actions** with secure secrets management
+
+### Example: Secure Automation Script
+
+```python
+#!/usr/bin/env python3
+import os
+import logging
+from github_repo_manager import GitHubRepoManager
+
+# Set up logging
+logging.basicConfig(
+    filename='repo_operations.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+# Safety checks
+def safety_check(repos, pattern):
+    if len(repos) > 10:
+        logging.warning(f"Large number of repositories ({len(repos)}) matched pattern '{pattern}'")
+        return input(f"Continue with {len(repos)} repositories? (y/n): ").lower() == 'y'
+    return True
+
+try:
+    # Use environment variable, not hardcoded token
+    manager = GitHubRepoManager()
+    
+    pattern = "test-"
+    repos = manager.get_repositories(filter_pattern=pattern)
+    
+    logging.info(f"Found {len(repos)} repositories matching pattern '{pattern}'")
+    
+    # Safety check
+    if safety_check(repos, pattern):
+        # Always dry run first in automated scripts
+        manager.bulk_delete(repos, dry_run=True)
+        
+        confirmation = input("Proceed with actual deletion? (y/n): ")
+        if confirmation.lower() == 'y':
+            manager.bulk_delete(repos, dry_run=False, confirm=True)
+    else:
+        logging.info("Operation cancelled by safety check")
+        
+except Exception as e:
+    logging.error(f"Error during operation: {str(e)}")
+```
+
+## Platform-specific Security Considerations
+
+### Windows
+
+- Store tokens in Windows Credential Manager
+- Use PowerShell's secure string feature for token handling
+
+```powershell
+# Store token securely
+$secureString = ConvertTo-SecureString "your-token" -AsPlainText -Force
+$cred = New-Object System.Management.Automation.PSCredential("github", $secureString)
+
+# Retrieve token
+$token = $cred.GetNetworkCredential().Password
+```
+
+### macOS/Linux
+
+- Use keychain for token storage
+- Set appropriate file permissions for any script containing tokens
+
+```bash
+# Restrict file permissions
+chmod 600 ~/.github_token
+
+# Use keychain
+security add-generic-password -a $USER -s github-token -w "your-token"
+```
+
+## Token Scope Recommendations
+
+| Operation | Minimum Required Scope |
+|-----------|------------------------|
+| List repositories | `repo` (or just `repo:status` for public repos) |
+| Delete repositories | `delete_repo` |
+| Access org repositories | `repo` and `admin:org` |
+
+## Incident Response
+
+If your token is compromised:
+
+1. **Revoke the token immediately** via GitHub settings
+2. **Review account activity** for unusual behavior
+3. **Generate a new token** with appropriate scopes
+4. **Update any scripts or environments** using the old token
+5. **Consider enabling two-factor authentication** if not already using it
+
+## Resources
+
+- [GitHub Documentation on Token Security](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/token-expiration-and-revocation)
+- [GitHub Documentation on Token Scopes](https://docs.github.com/en/developers/apps/scopes-for-oauth-apps)
+- [OWASP Secure Coding Practices](https://owasp.org/www-project-secure-coding-practices-quick-reference-guide/)
+
+Remember that security is everyone's responsibility. By following these best practices, you'll help keep your GitHub account and repositories secure while using GitHub Repository Manager.

@@ -1,0 +1,142 @@
+---
+title: Getting Started
+description: This guide will walk you through your first steps using GitHub Repository Manager, from installation to your first repository operations.
+keywords: ["getting started", "tutorial", "guide", "examples", "basic usage"]
+---
+
+## Quick Start
+
+Here's a quick overview of the steps to get started:
+
+1. Install the tool: `pip install github-repo-manager`
+2. Obtain a GitHub personal access token
+3. Run the tool: `github-repo-manager`
+4. Follow the interactive prompts
+
+## Basic Command-Line Usage
+
+After [installation](../../introduction/installation) and [setup](../../introduction/setup), try these basic commands:
+
+### List All Your Repositories
+
+To view all your GitHub repositories in the interactive selector:
+
+```bash
+github-repo-manager --dry-run
+```
+
+The `--dry-run` flag ensures no changes will be made - it's perfect for exploring your repositories.
+
+### Filter Repositories by Name Pattern
+
+To find repositories matching a specific pattern:
+
+```bash
+github-repo-manager --pattern "test-" --dry-run
+```
+
+This will show only repositories with names containing "test-".
+
+### Filter by Visibility
+
+To show only public or private repositories:
+
+```bash
+# Show only private repositories
+github-repo-manager --visibility private --dry-run
+
+# Show only public repositories
+github-repo-manager --visibility public --dry-run
+```
+
+## Interactive UI Navigation
+
+When you run GitHub Repository Manager, you'll see an interactive interface:
+
+![Interactive UI](/screens/screen-1.png)
+
+Navigate this interface using:
+
+- **↑/↓ Keys**: Move up and down through repositories
+- **Space**: Select/deselect the current repository
+- **PgUp/PgDn**: Navigate between pages of repositories
+- **a**: Select all repositories
+- **n**: Deselect all repositories
+- **Enter**: Confirm your selection
+- **q**: Quit without making changes
+
+## Making Your First Repository Operation
+
+Let's walk through a simple example of selecting and operating on repositories:
+
+1. **Start in dry-run mode**:
+   ```bash
+   github-repo-manager --pattern "temp-" --dry-run
+   ```
+
+2. **Navigate and select repositories**:
+   - Use arrow keys to navigate
+   - Press Space to select repositories
+   - Press Enter when you're ready
+
+3. **Review your selection**:
+   - You'll see a summary of selected repositories
+   - Confirm to proceed (in dry-run mode, no changes will be made)
+
+4. **Remove the dry-run flag for actual operations**:
+   ```bash
+   github-repo-manager --pattern "temp-"
+   ```
+   This time, after confirmation, the operations will actually be performed.
+
+## Basic Library Usage
+
+If you're a Python developer, you can use GitHub Repository Manager in your scripts:
+
+```python
+from github_repo_manager import GitHubRepoManager
+
+# Initialize the manager
+manager = GitHubRepoManager()
+
+# Get repositories matching a pattern
+repos = manager.get_repositories(filter_pattern="test-")
+
+# Perform operations (with dry-run for safety)
+manager.bulk_delete(repos, dry_run=True)
+```
+
+## Examples
+
+### Example 1: Clean Up Test Repositories
+
+```bash
+# First preview what would be deleted
+github-repo-manager --pattern "test-" --dry-run
+
+# Then perform the actual operation
+github-repo-manager --pattern "test-"
+```
+
+### Example 2: Review All Private Repositories
+
+```bash
+github-repo-manager --visibility private --dry-run
+```
+
+### Example 3: Non-Interactive Deletion
+
+If you're sure about what you want to delete and don't need the interactive UI:
+
+```bash
+# Be careful with this command - it will delete without interactive selection
+github-repo-manager --pattern "temp-" --no-confirm
+```
+
+## Next Steps
+
+Now that you've learned the basics:
+
+- Explore [configuration options](../configuration) for more customization
+- Check out [advanced usage](../customization) for specialized operations
+- Review [security best practices](../security) to ensure safe usage

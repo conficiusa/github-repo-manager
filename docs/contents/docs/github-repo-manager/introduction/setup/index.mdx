@@ -1,0 +1,99 @@
+---
+title: Setup
+description: After installing GitHub Repository Manager, you'll need to set up authentication to access your GitHub repositories. This guide walks you through the process.
+keywords: ["setup", "github", "token", "authentication", "configuration", "personal access token"]
+---
+## Creating a GitHub Personal Access Token
+
+To use GitHub Repository Manager, you need a GitHub Personal Access Token (PAT) with the proper permissions:
+
+1. Go to [GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)](https://github.com/settings/tokens)
+2. Click "Generate new token" → "Generate new token (classic)"
+3. Give your token a descriptive name (e.g., "GitHub Repository Manager")
+4. Set an expiration date (or choose "No expiration" if needed)
+5. Select the following permissions:
+   - For basic repository operations: check the `repo` scope
+   - For organization repositories: also check `admin:org` scope
+6. Click "Generate token"
+7. **Important**: Copy and save the token immediately in a secure location. GitHub will only display it once!
+
+![GitHub token creation screen](/screens/pat.png)
+
+## Authentication Methods
+
+GitHub Repository Manager supports multiple ways to provide your authentication credentials:
+
+### Method 1: Interactive Prompt
+
+If you don't provide credentials, the tool will prompt you for them:
+
+```bash
+github-repo-manager
+# You'll be prompted for your GitHub token and username
+```
+
+This is secure but requires you to enter credentials each time.
+
+### Method 2: Command Line Arguments
+
+You can provide credentials directly via command line arguments:
+
+```bash
+github-repo-manager --token YOUR_GITHUB_TOKEN --username YOUR_USERNAME
+```
+
+**Note**: This method may expose your token in command history. Use with caution.
+
+### Method 3: Environment Variables (Recommended)
+
+Set these environment variables to avoid entering credentials repeatedly:
+
+```bash
+# On Linux/macOS
+export GITHUB_TOKEN=your_token_here
+export GITHUB_USERNAME=your_username
+
+# On Windows (Command Prompt)
+set GITHUB_TOKEN=your_token_here
+set GITHUB_USERNAME=your_username
+
+# On Windows (PowerShell)
+$env:GITHUB_TOKEN="your_token_here"
+$env:GITHUB_USERNAME="your_username"
+```
+
+For permanent configuration, add these to your shell profile or environment variables.
+
+## Testing Your Configuration
+
+To verify your setup, run:
+
+```bash
+github-repo-manager --dry-run
+```
+
+You should see a list of your repositories without any authentication errors.
+
+## Security Best Practices
+
+1. **Never share your personal access token** or expose it in public repositories
+2. Set an appropriate expiration date for your token
+3. Use the principle of least privilege - only grant the permissions needed
+4. Consider using environment variables instead of command line arguments
+5. Revoke and regenerate tokens periodically
+
+## Troubleshooting
+
+If you encounter authentication issues:
+
+1. **"Bad credentials" error**: Verify your token is correct and not expired
+2. **Access denied errors**: Check that your token has the right scopes
+3. **Rate limit issues**: GitHub API has rate limits; the tool automatically adds delays between operations, but you might need to wait if you hit limits
+
+## Next Steps
+
+With authentication properly configured:
+
+- Learn the [basic usage](../../usage/getting-started) of the tool
+- Explore [configuration options](../../usage/configuration) for customization
+- Check out [examples](../../usage/customization) for common scenarios

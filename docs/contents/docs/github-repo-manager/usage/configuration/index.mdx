@@ -1,0 +1,145 @@
+---
+title: Configuration
+description: GitHub Repository Manager offers various configuration options to customize its behavior. This guide explains all available settings and how to use them.
+keywords: ["configuration", "options", "settings", "parameters", "customization"]
+---
+## Command-line Arguments
+
+When using the command-line interface, you can specify the following options:
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `--token TOKEN` | GitHub personal access token | Prompts if not provided |
+| `--username USERNAME` | GitHub username | Prompts if not provided |
+| `--pattern PATTERN` | Regex pattern to match repository names | None (all repos) |
+| `--visibility {public,private,all}` | Filter repositories by visibility | `all` |
+| `--dry-run` | Preview operations without making changes | Not set |
+| `--no-confirm` | Skip interactive selection and confirmation | Not set |
+| `--delay DELAY` | Delay between operations in seconds | 1.0 |
+
+## Environment Variables
+
+For persistent configuration, you can set these environment variables:
+
+| Environment Variable | Description |
+|---------------------|-------------|
+| `GITHUB_TOKEN` | Your GitHub personal access token |
+| `GITHUB_USERNAME` | Your GitHub username |
+
+## Configuration Examples
+
+### Example 1: Basic Filtering
+
+```bash
+# Show only repositories matching a pattern
+github-repo-manager --pattern "test-" --dry-run
+
+# Show only private repositories
+github-repo-manager --visibility private --dry-run
+
+# Combine filters
+github-repo-manager --pattern "test-" --visibility private --dry-run
+```
+
+### Example 2: Non-Interactive Mode
+
+```bash
+# Skip interactive selection - use with caution!
+github-repo-manager --pattern "temp-" --no-confirm
+```
+
+### Example 3: Custom Operation Delay
+
+```bash
+# Use a longer delay to avoid rate limits
+github-repo-manager --delay 2.5
+
+# Use a shorter delay for faster operations
+github-repo-manager --delay 0.5
+```
+
+## Python Library Configuration
+
+When using GitHub Repository Manager as a library in Python code, you can configure these parameters:
+
+### GitHubRepoManager Class
+
+```python
+from github_repo_manager import GitHubRepoManager
+
+manager = GitHubRepoManager(
+    token="your-github-token",  # Optional: will prompt if not provided
+    username="your-username"    # Optional: will prompt if not provided
+)
+```
+
+### get_repositories Method
+
+```python
+repos = manager.get_repositories(
+    filter_pattern="test-",      # Optional: regex pattern to match repo names
+    visibility="private",        # Optional: 'public', 'private', or None for all
+    max_pages=10                # Optional: max number of pages to fetch (30 repos per page)
+)
+```
+
+### bulk_delete Method
+
+```python
+manager.bulk_delete(
+    repos,                      # List of repositories to process
+    dry_run=True,              # Optional: preview without making changes
+    confirm=True,              # Optional: show interactive selection
+    delay=1.0                  # Optional: delay between operations in seconds
+)
+```
+
+## Advanced Configuration
+
+### Increasing Maximum Pages
+
+By default, the tool fetches up to 10 pages of repositories (30 repositories per page). If you have more than 300 repositories, you may need to increase this limit:
+
+```python
+# In Python code
+repos = manager.get_repositories(max_pages=20)  # Fetches up to 600 repositories
+```
+
+### Working with Regular Expressions
+
+The `--pattern` parameter supports regular expressions for flexible repository matching:
+
+```bash
+# Match repos starting with "test-" or "temp-"
+github-repo-manager --pattern "(test|temp)-" --dry-run
+
+# Match repos ending with "-old"
+github-repo-manager --pattern ".*-old$" --dry-run
+```
+
+## Best Practices
+
+1. **Always start with `--dry-run`** to preview operations before making changes
+2. **Use environment variables** for credentials instead of command-line arguments
+3. **Implement proper delays** (0.5-2.0 seconds) to avoid hitting GitHub API rate limits
+4. **Back up important data** before performing bulk operations
+
+## Troubleshooting Common Issues
+
+### "Too many API requests" Error
+
+If you encounter rate limit issues:
+
+```bash
+# Increase the delay between operations
+github-repo-manager --delay 2.0
+```
+
+### Large Repository Lists
+
+If you have many repositories:
+
+```python
+# In Python code, increase max_pages
+repos = manager.get_repositories(max_pages=30)
+```
