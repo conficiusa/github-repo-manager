@@ -4,14 +4,14 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="github-repo-bulk-delete",
-    version="0.1.1",
+    name="github-repo-manager",
+    version="0.1.2",
     author="conficiusa",
     author_email="your.email@example.com",
-    description="A CLI tool to interactively select and delete multiple GitHub repositories",
+    description="A CLI tool to manage GitHub repositories with interactive features",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/conficiusa/github-repo-bulk-delete",
+    url="https://github.com/conficiusa/github-repo-manager",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -25,7 +25,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "github-repo-delete=github_repo_bulk_deleter:cli_main",
+            "github-repo-manager=github_repo_manager:cli_main",
         ],
     },
 )

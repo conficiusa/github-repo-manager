@@ -1,0 +1,56 @@
+[
+  {
+    "title": "Github Repo Manager",
+    "slug": "/github-repo-manager",
+    "content": "Github Repo Manager documentation. A command-line tool to interactively manage GitHub repositories with powerful features.",
+    "description": "Documentation for Github Repo Manager"
+  },
+  {
+    "title": "Introduction",
+    "slug": "/github-repo-manager/introduction",
+    "content": "Introduction to Github Repo Manager. Learn about the key features and capabilities of this powerful GitHub repository management tool.",
+    "description": "Introduction section for Github Repo Manager"
+  },
+  {
+    "title": "Installation",
+    "slug": "/github-repo-manager/introduction/installation",
+    "content": "Installation guide for Github Repo Manager. Learn how to install via pip or from source code.",
+    "description": "Installation guide for Github Repo Manager"
+  },
+  {
+    "title": "Setup",
+    "slug": "/github-repo-manager/introduction/setup",
+    "content": "Setup guide for Github Repo Manager. Learn how to configure your GitHub token and username.",
+    "description": "Setup guide for Github Repo Manager"
+  },
+  {
+    "title": "Changelog",
+    "slug": "/github-repo-manager/introduction/changelog",
+    "content": "Changelog for Github Repo Manager. View all version updates and feature additions.",
+    "description": "Changelog for Github Repo Manager"
+  },
+  {
+    "title": "Usage",
+    "slug": "/github-repo-manager/usage",
+    "content": "Usage guide for Github Repo Manager. Learn how to use the interactive UI and command line options.",
+    "description": "Usage section for Github Repo Manager"
+  },
+  {
+    "title": "Getting Started",
+    "slug": "/github-repo-manager/usage/getting-started",
+    "content": "Getting started with Github Repo Manager. Learn the basics of managing your repositories.",
+    "description": "Getting started guide for Github Repo Manager"
+  },
+  {
+    "title": "Configuration",
+    "slug": "/github-repo-manager/usage/configuration",
+    "content": "Configuration options for Github Repo Manager. Learn about all available command line arguments and options.",
+    "description": "Configuration guide for Github Repo Manager"
+  },
+  {
+    "title": "Customization",
+    "slug": "/github-repo-manager/usage/customization",
+    "content": "Customization guide for Github Repo Manager. Learn how to adapt the tool for your specific workflow.",
+    "description": "Customization guide for Github Repo Manager"
+  }
+]

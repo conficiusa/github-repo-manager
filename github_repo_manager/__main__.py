@@ -1,6 +1,3 @@
-"""
-GitHub Repository Bulk Deleter - A tool to interactively select and delete multiple GitHub repositories
-"""
 import requests
 import os
 import argparse
@@ -8,7 +5,7 @@ import time
 from getpass import getpass
 from blessed import Terminal
 
-class GitHubRepoBulkDeleter:
+class GitHubRepoManager:
     def __init__(self, token=None, username=None):
         self.token = token or os.environ.get('GITHUB_TOKEN') or getpass("Enter your GitHub personal access token: ")
         self.username = username or os.environ.get('GITHUB_USERNAME') or input("Enter your GitHub username: ")
@@ -19,7 +16,71 @@ class GitHubRepoBulkDeleter:
         self.base_url = 'https://api.github.com'
         self.term = Terminal()
         
-    # ...existing code...
+    def get_repositories(self, filter_pattern=None, visibility=None, max_pages=10):
+        """
+        Get repositories matching criteria
+        
+        :param filter_pattern: Optional regex pattern to match repo names
+        :param visibility: Filter by visibility ('public', 'private', or None for all)
+        :param max_pages: Maximum number of pages to fetch (30 repos per page)
+        :return: List of repository objects
+        """
+        repos = []
+        page = 1
+        
+        print(f"Fetching repositories for user {self.username}...")
+        
+        while page <= max_pages:
+            params = {'per_page': 30, 'page': page}
+            if visibility:
+                params['type'] = visibility
+                
+            response = requests.get(
+                f"{self.base_url}/user/repos", 
+                headers=self.headers,
+                params=params
+            )
+            
+            if response.status_code != 200:
+                print(f"Error fetching repositories: {response.status_code}")
+                print(response.text)
+                break
+                
+            page_repos = response.json()
+            if not page_repos:
+                break
+                
+            repos.extend(page_repos)
+            page += 1
+            
+        print(f"Found {len(repos)} repositories")
+        
+        # Filter by pattern if provided
+        if filter_pattern:
+            import re
+            pattern = re.compile(filter_pattern)
+            repos = [repo for repo in repos if pattern.search(repo['name'])]
+            print(f"After filtering: {len(repos)} repositories match pattern '{filter_pattern}'")
+            
+        return repos
+        
+    def delete_repository(self, repo_name):
+        """
+        Delete a specific repository
+        
+        :param repo_name: Name of the repository to delete
+        :return: True if successful, False otherwise
+        """
+        url = f"{self.base_url}/repos/{self.username}/{repo_name}"
+        response = requests.delete(url, headers=self.headers)
+        
+        if response.status_code == 204:
+            print(f"Successfully deleted {repo_name}")
+            return True
+        else:
+            print(f"Failed to delete {repo_name}: {response.status_code}")
+            print(response.text)
+            return False
             
     def select_repositories_interactively(self, repos):
         """
@@ -222,25 +283,24 @@ class GitHubRepoBulkDeleter:
         return deleted_count
 
 def main():
-    parser = argparse.ArgumentParser(description="Bulk delete GitHub repositories")
+    parser = argparse.ArgumentParser(description="Manage GitHub repositories")
     parser.add_argument("--token", help="GitHub personal access token")
     parser.add_argument("--username", help="GitHub username")
     parser.add_argument("--pattern", help="Regex pattern to match repository names")
-    parser.add_argument("--visibility", choices=["public", "private"], help="Filter by visibility")
+    parser.add_argument("--visibility", choices=["public", "private", "all"], default="all", 
+                        help="Filter by visibility (public or private)")
     parser.add_argument("--no-confirm", action="store_true", help="Skip confirmation prompt")
-    parser.add_argument("--dry-run", action="store_true", help="Only show which repos would be deleted")
-    parser.add_argument("--delay", type=float, default=1.0, help="Delay between deletions in seconds")
+    parser.add_argument("--dry-run", action="store_true", help="Only show which repos would be affected")
+    parser.add_argument("--delay", type=float, default=1.0, help="Delay between operations in seconds")
     
     args = parser.parse_args()
     
-    deleter = GitHubRepoBulkDeleter(token=args.token, username=args.username)
-    repos = deleter.get_repositories(filter_pattern=args.pattern, visibility=args.visibility)
-    deleter.bulk_delete(repos, dry_run=args.dry_run, confirm=not args.no_confirm, delay=args.delay)
-
-# Entry point for the CLI
-def cli_main():
-    """Entry point for the CLI tool."""
-    main()
+    manager = GitHubRepoManager(token=args.token, username=args.username)
+    repos = manager.get_repositories(
+        filter_pattern=args.pattern,
+        visibility=args.visibility if args.visibility != "all" else None
+    )
+    manager.bulk_delete(repos, dry_run=args.dry_run, confirm=not args.no_confirm, delay=args.delay)
 
 if __name__ == "__main__":
     main()
